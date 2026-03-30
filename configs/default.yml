@@ -1,0 +1,58 @@
+simulator:
+  tick_interval: 1.0
+  time_scale: 1.0
+
+devices:
+  - name: "Schneider-RTU"
+    type: thermostat
+    device_id: 86254
+    registry: "configs/schneider.csv"
+    thermal:
+      R: 0.02
+      C: 1000
+      initial_zone_temp: 72.0
+      cooling_capacity_stage1: 18000
+      cooling_capacity_stage2: 18000
+      heating_capacity_stage1: 20000
+      heating_capacity_stage2: 20000
+    weather:
+      type: sine_wave
+      mean: 85.0
+      amplitude: 15.0
+      phase_offset: 14.0
+
+  - name: "OpenStat-RTU"
+    type: thermostat
+    device_id: 86255
+    registry: "configs/openstat.csv"
+    thermal:
+      R: 0.02
+      C: 1000
+      initial_zone_temp: 72.0
+      cooling_capacity_stage1: 18000
+      cooling_capacity_stage2: 18000
+      heating_capacity_stage1: 20000
+      heating_capacity_stage2: 20000
+    weather:
+      type: sine_wave
+      mean: 85.0
+      amplitude: 15.0
+      phase_offset: 14.0
+
+  - name: "DENT-Meter"
+    type: power_meter
+    device_id: 20001
+    registry: "configs/dent.csv"
+    power:
+      base_load_kw: 5.0
+      hvac_load_per_stage_kw: 3.0
+
+bacnet:
+  enabled: true
+  interface: "0.0.0.0"
+  port: 47808
+
+api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8080

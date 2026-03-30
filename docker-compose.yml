@@ -1,0 +1,9 @@
+services:
+  sim-rtu:
+    build: .
+    ports:
+      - "47808:47808/udp"
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs:ro
+    restart: unless-stopped
