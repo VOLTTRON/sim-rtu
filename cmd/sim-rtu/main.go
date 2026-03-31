@@ -63,7 +63,7 @@ func main() {
 
 	// Start API server
 	if cfg.API.Enabled {
-		apiSrv := api.New(eng, cfg.API.Host, cfg.API.Port)
+		apiSrv := api.New(eng, cfg.API.Host, cfg.API.Port, cfg.API.Token)
 		go func() {
 			if err := apiSrv.Start(ctx); err != nil {
 				slog.Error("API server error", "error", err)

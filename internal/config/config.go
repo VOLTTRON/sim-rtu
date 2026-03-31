@@ -70,6 +70,7 @@ type APIConfig struct {
 	Enabled bool   `yaml:"enabled"`
 	Host    string `yaml:"host"`
 	Port    int    `yaml:"port"`
+	Token   string `yaml:"token,omitempty"` // optional bearer token for PUT/POST
 }
 
 // Load reads and parses a YAML configuration file.
@@ -129,6 +130,14 @@ func (c *AppConfig) Validate() error {
 
 		if d.Type == "thermostat" && d.Thermal == nil {
 			return fmt.Errorf("devices[%d] is thermostat but missing thermal config", i)
+		}
+		if d.Type == "thermostat" && d.Thermal != nil {
+			if d.Thermal.R <= 0 {
+				return fmt.Errorf("devices[%d].thermal.R must be > 0", i)
+			}
+			if d.Thermal.C <= 0 {
+				return fmt.Errorf("devices[%d].thermal.C must be > 0", i)
+			}
 		}
 		if d.Type == "power_meter" && d.Power == nil {
 			return fmt.Errorf("devices[%d] is power_meter but missing power config", i)

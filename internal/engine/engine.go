@@ -26,11 +26,12 @@ type Device struct {
 
 // Engine runs the simulation loop for all devices.
 type Engine struct {
-	config  *config.AppConfig
-	devices map[int]*Device
-	elapsed float64 // simulation time in hours
-	mu      sync.RWMutex
-	done    chan struct{}
+	config   *config.AppConfig
+	devices  map[int]*Device
+	elapsed  float64 // simulation time in hours
+	mu       sync.RWMutex
+	done     chan struct{}
+	stopOnce sync.Once
 }
 
 // New creates a simulation engine from configuration.
@@ -123,16 +124,28 @@ func (e *Engine) Start(ctx context.Context) error {
 	}
 }
 
-// Stop signals the engine to shut down.
+// Stop signals the engine to shut down. It is safe to call multiple times.
 func (e *Engine) Stop() {
-	close(e.done)
+	e.stopOnce.Do(func() { close(e.done) })
 }
 
-// Devices returns all simulated devices.
+// Devices returns a shallow copy of the device map so callers cannot
+// race with the tick loop.
 func (e *Engine) Devices() map[int]*Device {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
-	return e.devices
+	cp := make(map[int]*Device, len(e.devices))
+	for k, v := range e.devices {
+		cp[k] = v
+	}
+	return cp
+}
+
+// Device returns a single device by ID, or nil if not found.
+func (e *Engine) Device(id int) *Device {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.devices[id]
 }
 
 // Elapsed returns the simulation time in hours.

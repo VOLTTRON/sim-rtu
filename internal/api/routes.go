@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/VOLTTRON/sim-rtu/internal/engine"
@@ -48,9 +49,17 @@ func (s *Server) registerRoutes(mux *http.ServeMux) {
 
 func (s *Server) handleListDevices(w http.ResponseWriter, _ *http.Request) {
 	devices := s.engine.Devices()
-	infos := make([]DeviceInfo, 0, len(devices))
 
-	for id, dev := range devices {
+	// Collect and sort IDs for deterministic ordering.
+	ids := make([]int, 0, len(devices))
+	for id := range devices {
+		ids = append(ids, id)
+	}
+	sort.Ints(ids)
+
+	infos := make([]DeviceInfo, 0, len(devices))
+	for _, id := range ids {
+		dev := devices[id]
 		infos = append(infos, DeviceInfo{
 			DeviceID:   id,
 			Name:       dev.Config.Name,
@@ -101,11 +110,23 @@ func (s *Server) handleGetPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pv := PointValue{Name: name, Value: v}
+	// Look up units from definitions so the response is consistent with
+	// handleListPoints.
+	var units string
+	for _, d := range dev.Store.Definitions() {
+		if d.VolttronName == name {
+			units = d.Units
+			break
+		}
+	}
+
+	pv := PointValue{Name: name, Value: v, Units: units}
 	writeJSON(w, http.StatusOK, Response{Success: true, Data: pv})
 }
 
 func (s *Server) handleWritePoint(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1 MB limit
+
 	dev, ok := s.getDevice(w, r)
 	if !ok {
 		return
@@ -141,6 +162,8 @@ func (s *Server) handleStatus(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) handleWeatherOverride(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1 MB limit
+
 	var req struct {
 		Temperature float64 `json:"temperature"`
 		DeviceID    *int    `json:"device_id,omitempty"`
@@ -172,8 +195,8 @@ func (s *Server) getDevice(w http.ResponseWriter, r *http.Request) (*engine.Devi
 		return nil, false
 	}
 
-	dev, ok := s.engine.Devices()[id]
-	if !ok {
+	dev := s.engine.Device(id)
+	if dev == nil {
 		writeJSON(w, http.StatusNotFound, Response{Success: false, Error: "device not found"})
 		return nil, false
 	}

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/VOLTTRON/sim-rtu/internal/engine"
 )
@@ -13,21 +15,47 @@ import (
 type Server struct {
 	engine *engine.Engine
 	srv    *http.Server
+	token  string
 }
 
-// New creates a new API server.
-func New(eng *engine.Engine, host string, port int) *Server {
-	s := &Server{engine: eng}
+// New creates a new API server. If token is non-empty, PUT/POST
+// requests require a matching Bearer token in the Authorization header.
+// The API_TOKEN environment variable is used as a fallback when the
+// config token is empty.
+func New(eng *engine.Engine, host string, port int, token string) *Server {
+	if token == "" {
+		token = os.Getenv("API_TOKEN")
+	}
+	s := &Server{engine: eng, token: token}
 
 	mux := http.NewServeMux()
 	s.registerRoutes(mux)
 
 	s.srv = &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", host, port),
-		Handler: mux,
+		Addr:              fmt.Sprintf("%s:%d", host, port),
+		Handler:           s.authMiddleware(mux),
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       120 * time.Second,
 	}
 
 	return s
+}
+
+// authMiddleware enforces bearer-token authentication on mutating
+// (PUT, POST) requests when a token is configured.
+func (s *Server) authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if s.token != "" && (r.Method == "PUT" || r.Method == "POST") {
+			auth := r.Header.Get("Authorization")
+			if auth != "Bearer "+s.token {
+				writeJSON(w, http.StatusUnauthorized, Response{Error: "unauthorized"})
+				return
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 // Start begins serving HTTP requests.

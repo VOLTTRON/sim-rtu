@@ -126,8 +126,24 @@ func TestValidate(t *testing.T) {
 				Simulator: SimulatorConfig{TickInterval: 1.0, TimeScale: 1.0},
 				Devices: []DeviceConfig{
 					validDevice,
-					{Name: "test2", Type: "thermostat", DeviceID: 1, Registry: "test.csv", Thermal: &ThermalConfig{}},
+					{Name: "test2", Type: "thermostat", DeviceID: 1, Registry: "test.csv", Thermal: &ThermalConfig{R: 0.02, C: 1000}},
 				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "thermostat with zero R",
+			cfg: AppConfig{
+				Simulator: SimulatorConfig{TickInterval: 1.0, TimeScale: 1.0},
+				Devices:   []DeviceConfig{{Name: "test", Type: "thermostat", DeviceID: 1, Registry: "test.csv", Thermal: &ThermalConfig{R: 0, C: 1000}}},
+			},
+			wantErr: true,
+		},
+		{
+			name: "thermostat with zero C",
+			cfg: AppConfig{
+				Simulator: SimulatorConfig{TickInterval: 1.0, TimeScale: 1.0},
+				Devices:   []DeviceConfig{{Name: "test", Type: "thermostat", DeviceID: 1, Registry: "test.csv", Thermal: &ThermalConfig{R: 0.02, C: 0}}},
 			},
 			wantErr: true,
 		},

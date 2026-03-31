@@ -49,10 +49,10 @@ devices:
 
 bacnet:
   enabled: true
-  interface: "0.0.0.0"
+  interface: "127.0.0.1"
   port: 47808
 
 api:
   enabled: true
-  host: "0.0.0.0"
+  host: "127.0.0.1"
   port: 8080

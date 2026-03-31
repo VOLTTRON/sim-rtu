@@ -49,6 +49,15 @@ func setupServer(t *testing.T) *http.ServeMux {
 	return mux
 }
 
+func setupServerWithToken(t *testing.T, token string) http.Handler {
+	t.Helper()
+	eng := testEngine(t)
+	mux := http.NewServeMux()
+	s := &Server{engine: eng, token: token}
+	s.registerRoutes(mux)
+	return s.authMiddleware(mux)
+}
+
 func TestHandleListDevices(t *testing.T) {
 	mux := setupServer(t)
 

@@ -1,6 +1,7 @@
 package thermal
 
 import (
+	"sync"
 	"time"
 )
 
@@ -46,8 +47,9 @@ func (s HVACState) TotalActiveStages() int {
 }
 
 // Controller is a multi-stage thermostat controller with deadband
-// and anti-short-cycle protection.
+// and anti-short-cycle protection. It is safe for concurrent use.
 type Controller struct {
+	mu                 sync.RWMutex
 	DeadBand           float64
 	ProportionalBand   float64
 	AntiShortCycleTime time.Duration
@@ -68,6 +70,9 @@ func NewController(deadBand, proportionalBand float64, antiShortCycleTime time.D
 
 // Evaluate determines the new HVAC state based on zone conditions.
 func (c *Controller) Evaluate(zoneTemp, coolingSetpoint, heatingSetpoint, outdoorTemp float64, now time.Time) HVACState {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	// Anti-short-cycle check
 	if c.stageChanged && now.Sub(c.lastStageChangeTime) < c.AntiShortCycleTime {
 		return c.currentState
@@ -135,6 +140,8 @@ func (c *Controller) Evaluate(zoneTemp, coolingSetpoint, heatingSetpoint, outdoo
 
 // CurrentState returns the controller's current HVAC state.
 func (c *Controller) CurrentState() HVACState {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	return c.currentState
 }
 
