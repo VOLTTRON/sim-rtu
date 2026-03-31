@@ -1,0 +1,9 @@
+{
+    "device_address": "127.0.0.1/24",
+    "max_apdu_length": 1024,
+    "object_name": "AEMS BACnet Proxy",
+    "object_identifier": 599,
+    "max_per_request": 24,
+    "default_priority": 16,
+    "timeout": 10
+}
