@@ -1,21 +1,9 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-*.egg-info/
-*.egg
-dist/
-build/
-eggs/
-.eggs/
-*.whl
-
-# Virtual environments
-.venv/
-venv/
-ENV/
-env/
+# Go
+bin/
+coverage.out
+*.exe
+*.test
+*.prof
 
 # IDE
 .idea/
@@ -23,12 +11,6 @@ env/
 *.swp
 *.swo
 *~
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.mypy_cache/
 
 # OS
 .DS_Store
@@ -41,3 +23,11 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Python (legacy)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/

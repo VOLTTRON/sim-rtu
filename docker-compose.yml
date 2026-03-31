@@ -5,5 +5,5 @@ services:
       - "47808:47808/udp"
       - "8080:8080"
     volumes:
-      - ./configs:/app/configs:ro
-    restart: unless-stopped
+      - ./configs:/app/configs
+    command: ["--config", "configs/default.yml", "--log-level", "DEBUG"]
