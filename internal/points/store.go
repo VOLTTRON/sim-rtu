@@ -189,3 +189,16 @@ func (ps *PointStore) ReadFloat(name string) float64 {
 func (ps *PointStore) ReadBool(name string) bool {
 	return ps.ReadFloat(name) > 0
 }
+
+// DefinitionByKey returns the PointDefinition for a given BACnet object type and index.
+func (ps *PointStore) DefinitionByKey(objectType string, index int) (PointDefinition, bool) {
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	name, ok := ps.objectIndex[ObjectKey{ObjectType: objectType, Index: index}]
+	if !ok {
+		return PointDefinition{}, false
+	}
+	def, ok := ps.definitions[name]
+	return def, ok
+}
