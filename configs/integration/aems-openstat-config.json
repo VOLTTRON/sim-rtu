@@ -1,0 +1,11 @@
+{
+    "driver_config": {
+        "device_address": "127.0.0.1",
+        "device_id": 86255
+    },
+    "driver_type": "bacnet",
+    "registry_config": "config://registry_configs/openstat.csv",
+    "interval": 60,
+    "timezone": "US/Pacific",
+    "heart_beat_point": "HeartBeat"
+}
