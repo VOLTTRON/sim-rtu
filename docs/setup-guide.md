@@ -1,6 +1,6 @@
 # sim-rtu Setup Guide
 
-Build and run the RTU simulator. For full AEMS platform setup (connecting sim-rtu to aems-lib-fastapi), see the [AEMS Platform Setup Guide](https://github.com/VOLTTRON/aems-lib-fastapi/blob/develop/docs/SETUP_GUIDE.md).
+Build and run the RTU simulator. For full AEMS platform setup, see the [AEMS System Setup Guide](https://github.com/VOLTTRON/volttron-pnnl-aems/blob/main/docs/SETUP_GUIDE.md).
 
 ## Prerequisites
 
@@ -100,4 +100,4 @@ See [driver-switching.md](driver-switching.md) for details.
 
 ## Next Steps
 
-Connect sim-rtu to the AEMS platform: [AEMS Platform Setup Guide](https://github.com/VOLTTRON/aems-lib-fastapi/blob/develop/docs/SETUP_GUIDE.md)
+Connect sim-rtu to the AEMS platform: [AEMS System Setup Guide](https://github.com/VOLTTRON/volttron-pnnl-aems/blob/main/docs/SETUP_GUIDE.md)
