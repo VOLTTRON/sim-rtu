@@ -1,0 +1,14 @@
+driver_config:
+  url: http://127.0.0.1:8080
+  # No auth needed for sim-rtu
+device_list:
+- device_id: 86254
+  registry_file: schneider.csv
+  topic: SIM/RTU/Schneider
+- device_id: 86255
+  registry_file: openstat.csv
+  topic: SIM/RTU/OpenStat
+- device_id: 20001
+  registry_file: dent.csv
+  topic: SIM/RTU/DENT
+polling_interval: 60

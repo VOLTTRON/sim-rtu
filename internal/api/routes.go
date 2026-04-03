@@ -45,6 +45,9 @@ func (s *Server) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("PUT /api/v1/devices/{deviceID}/points/{name}", s.handleWritePoint)
 	mux.HandleFunc("GET /api/v1/status", s.handleStatus)
 	mux.HandleFunc("POST /api/v1/weather", s.handleWeatherOverride)
+
+	// Normal Framework compatible API
+	mux.HandleFunc("POST /api/v2/bacnet/confirmed-service", s.handleNFConfirmedService)
 }
 
 func (s *Server) handleListDevices(w http.ResponseWriter, _ *http.Request) {
