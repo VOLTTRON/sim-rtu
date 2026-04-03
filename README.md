@@ -29,7 +29,9 @@ Or: `make run` / `docker compose up`
 
 ## AEMS Integration
 
-See **[docs/setup-guide.md](docs/setup-guide.md)** for complete zero-to-running instructions covering both sim-rtu and aems-lib-fastapi.
+See **[docs/setup-guide.md](docs/setup-guide.md)** for sim-rtu build/run instructions.
+
+For full AEMS platform setup (connecting to aems-lib-fastapi with any device target), see the **[AEMS Platform Setup Guide](https://github.com/VOLTTRON/aems-lib-fastapi/blob/develop/docs/SETUP_GUIDE.md)**.
 
 ## Driver Modes
 
