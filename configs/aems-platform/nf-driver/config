@@ -1,0 +1,18 @@
+driver_config:
+  url: http://127.0.0.1:8080
+  # No auth needed for sim-rtu
+  # For Docker: change to http://172.17.0.1:8080
+device_list:
+- device_id: 86254
+  registry_file: schneider.csv
+  topic: SIM/RTU/Schneider
+  points_per_request: 25
+- device_id: 86255
+  registry_file: openstat.csv
+  topic: SIM/RTU/OpenStat
+  points_per_request: 25
+- device_id: 20001
+  registry_file: dent.csv
+  topic: SIM/RTU/DENT
+  points_per_request: 25
+polling_interval: 60

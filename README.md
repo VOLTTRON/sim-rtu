@@ -72,6 +72,24 @@ Run the Go integration tests directly:
 go test -tags integration -v -timeout 60s ./tests/integration/
 ```
 
+## Driver Modes
+
+sim-rtu supports two driver modes for AEMS platform integration:
+
+- **Legacy Platform Driver (BACnet)** — uses BACnet/IP on UDP 47808, requires BACnet proxy agent
+- **Normal Framework Driver (NF REST)** — uses HTTP REST API on port 8080, simpler setup
+
+See [docs/driver-switching.md](docs/driver-switching.md) for the complete switching guide.
+
+Quick switch scripts:
+```bash
+# Switch to NF REST driver
+./scripts/switch-to-nf.sh /path/to/aems-lib-fastapi
+
+# Switch to BACnet driver
+./scripts/switch-to-bacnet.sh /path/to/aems-lib-fastapi
+```
+
 ## Integration with VOLTTRON/AEMS
 
 sim-rtu acts as a BACnet/IP device simulator that the AEMS platform driver
